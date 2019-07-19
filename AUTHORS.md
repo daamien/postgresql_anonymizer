@@ -17,7 +17,7 @@ Contributors
 -------------------------------------------------------------------------------
 
 * Damien Cazeils (www.damiencazeils.com) : Logo
-* Ioseph Kim (@i0seph ) : Documentation 
+* Ioseph Kim (@i0seph) : Documentation 
 * Matiss Zarkevics (@leovingi) : Tests on Amazon RDS
 * Peter Goodwin (@Postgressor) : Tests
 * Tim (@roconda) : Documentation
