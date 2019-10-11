@@ -62,10 +62,10 @@ BEGIN
   EXECUTE format('
      UPDATE %I
      SET %I = %I *  (1+ (2 * random() - 1 ) * %L) ;
-     ', 
-     noise_table, 
-     noise_column, 
-     noise_column, 
+     ',
+     noise_table,
+     noise_column,
+     noise_column,
      ratio
 );
 RETURN TRUE;
@@ -98,7 +98,7 @@ BEGIN
   END IF;
 
   EXECUTE format('
-     UPDATE %I 
+     UPDATE %I
      SET %I = %I + (2 * random() - 1 ) * ''%s''::INTERVAL
      ',
       noise_table,
@@ -168,9 +168,9 @@ BEGIN
   SET %2$I = s2.val
   FROM s1 JOIN s2 ON s1.n = s2.n
   WHERE %3$I = s1.pkey;
-  ', 
-  shuffle_table, 
-  shuffle_column, 
+  ',
+  shuffle_table,
+  shuffle_column,
   primary_key);
   RETURN TRUE;
 END;
@@ -292,7 +292,7 @@ BEGIN
 
   EXCEPTION
     WHEN undefined_file THEN
-      RAISE WARNING 'The path ''%'' does not exist. Data is not loaded.', 
+      RAISE WARNING 'The path ''%'' does not exist. Data is not loaded.',
       datapath;
     RETURN FALSE;
 END;
@@ -357,7 +357,7 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.random_string(
   l integer
 )
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT array_to_string(
     array(
@@ -373,7 +373,7 @@ LANGUAGE SQL VOLATILE
 
 -- Zip code
 CREATE OR REPLACE FUNCTION @extschema@.random_zip()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT array_to_string(
          array(
@@ -392,7 +392,7 @@ CREATE OR REPLACE FUNCTION @extschema@.random_date_between(
   date_start timestamp WITH TIME ZONE,
   date_end timestamp WITH TIME ZONE
 )
-RETURNS timestamp WITH TIME ZONE AS 
+RETURNS timestamp WITH TIME ZONE AS
 $func$
   SELECT (random()*(date_end-date_start))::interval+date_start;
 $func$
@@ -400,7 +400,7 @@ LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION random_date()
-RETURNS timestamp with time zone AS 
+RETURNS timestamp with time zone AS
 $func$
   SELECT @extschema@.random_date_between('01/01/1900'::DATE,now());
 $func$
@@ -411,10 +411,10 @@ LANGUAGE SQL VOLATILE
 -- integer
 
 CREATE OR REPLACE FUNCTION @extschema@.random_int_between(
-  int_start INTEGER, 
+  int_start INTEGER,
   int_stop INTEGER
 )
-RETURNS INTEGER AS 
+RETURNS INTEGER AS
 $func$
   SELECT CAST ( random()*(int_stop-int_start)+int_start AS INTEGER );
 $func$
@@ -422,10 +422,10 @@ LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_phone(phone_prefix TEXT DEFAULT '0' )
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-    SELECT phone_prefix 
-          || CAST(@extschema@.random_int_between(100000000,999999999) AS TEXT) 
+    SELECT phone_prefix
+          || CAST(@extschema@.random_int_between(100000000,999999999) AS TEXT)
               AS "phone";
 $func$
 LANGUAGE SQL VOLATILE
@@ -436,7 +436,7 @@ LANGUAGE SQL VOLATILE
 -------------------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_first_name()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT first_name
   FROM @extschema@.first_name
@@ -446,7 +446,7 @@ LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_last_name()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT name
   FROM @extschema@.last_name
@@ -456,7 +456,7 @@ LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_email()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT address
   FROM @extschema@.email
@@ -468,19 +468,19 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.fake_city_in_country(
   country_name TEXT
 )
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT name
   FROM @extschema@.city
   WHERE country=country_name
-  ORDER BY random() 
+  ORDER BY random()
   LIMIT 1;
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_city()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT name
   FROM @extschema@.city
@@ -492,72 +492,72 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.fake_region_in_country(
   country_name TEXT
 )
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
   SELECT subcountry
   FROM @extschema@.city
   WHERE country=country_name
-  ORDER BY random() 
+  ORDER BY random()
   LIMIT 1;
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_region()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT subcountry 
-  FROM @extschema@.city 
+  SELECT subcountry
+  FROM @extschema@.city
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_country()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT country 
-  FROM @extschema@.city 
+  SELECT country
+  FROM @extschema@.city
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_company()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT name 
-  FROM @extschema@.company 
+  SELECT name
+  FROM @extschema@.company
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_iban()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT id 
-  FROM @extschema@.iban 
+  SELECT id
+  FROM @extschema@.iban
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_siren()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT siren 
-  FROM @extschema@.siret 
+  SELECT siren
+  FROM @extschema@.siret
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.fake_siret()
-RETURNS TEXT AS 
+RETURNS TEXT AS
 $func$
-  SELECT siren||nic 
-  FROM @extschema@.siret 
+  SELECT siren||nic
+  FROM @extschema@.siret
   TABLESAMPLE SYSTEM_ROWS(1);
 $func$
 LANGUAGE SQL VOLATILE
@@ -568,8 +568,8 @@ LANGUAGE SQL VOLATILE
 --
 
 CREATE OR REPLACE FUNCTION @extschema@.random_first_name()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_first_name();
 $func$
 LANGUAGE SQL VOLATILE
@@ -577,17 +577,17 @@ LANGUAGE SQL VOLATILE
 
 
 CREATE OR REPLACE FUNCTION @extschema@.random_last_name()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_last_name();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_email()
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_email(); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_email();
 $func$
 LANGUAGE SQL VOLATILE
 ;
@@ -595,17 +595,17 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.random_city_in_country(
   country_name TEXT
 )
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_city_in_country(country_name); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_city_in_country(country_name);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_city();
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_city(); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_city();
 $func$
 LANGUAGE SQL VOLATILE
 ;
@@ -613,56 +613,56 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.random_region_in_country(
   country_name TEXT
 )
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_region_in_country(country_name); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_region_in_country(country_name);
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_region()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_region();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_country()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_country();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_company()
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_company(); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_company();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_iban()
-RETURNS TEXT AS 
-$func$ 
-  SELECT @extschema@.fake_iban(); 
+RETURNS TEXT AS
+$func$
+  SELECT @extschema@.fake_iban();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_siren()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_siren();
 $func$
 LANGUAGE SQL VOLATILE
 ;
 
 CREATE OR REPLACE FUNCTION @extschema@.random_siret()
-RETURNS TEXT AS 
-$func$ 
+RETURNS TEXT AS
+$func$
   SELECT @extschema@.fake_siret();
 $func$
 LANGUAGE SQL VOLATILE
@@ -748,9 +748,9 @@ JOIN pg_catalog.pg_class c ON a.attrelid = c.oid
 WHERE a.attnum > 0
 --  TODO : Filter out the catalog tables
 AND NOT a.attisdropped
-AND (   pg_catalog.col_description(a.attrelid, a.attnum) 
+AND (   pg_catalog.col_description(a.attrelid, a.attnum)
           SIMILAR TO k.pattern_mask_column_function ESCAPE '#'
-    OR  pg_catalog.col_description(a.attrelid, a.attnum) 
+    OR  pg_catalog.col_description(a.attrelid, a.attnum)
           SIMILAR TO k.pattern_mask_column_constant ESCAPE '#'
     )
 ),
@@ -762,16 +762,16 @@ SELECT
   a.attname,
   pg_catalog.format_type(a.atttypid, a.atttypmod),
   sl.label AS col_description,
-  substring(sl.label from k.pattern_mask_column_function for '#')  
+  substring(sl.label from k.pattern_mask_column_function for '#')
     AS masking_function,
-  substring(sl.label from k.pattern_mask_column_constant for '#')  
+  substring(sl.label from k.pattern_mask_column_constant for '#')
     AS masking_constant,
   100 AS priority -- high priority for the security label syntax
 FROM const k,
      pg_catalog.pg_seclabel sl
-JOIN pg_catalog.pg_class c 
+JOIN pg_catalog.pg_class c
   ON sl.classoid = c.tableoid AND sl.objoid = c.oid
-JOIN pg_catalog.pg_attribute a 
+JOIN pg_catalog.pg_attribute a
   ON a.attrelid = c.oid AND sl.objsubid = a.attnum
 WHERE a.attnum > 0
 --  TODO : Filter out the catalog tables
@@ -794,7 +794,7 @@ ORDER BY attrelid, attnum, priority DESC
 
 -- Compatibility with version 0.3 and earlier
 CREATE OR REPLACE VIEW @extschema@.pg_masks AS
-SELECT * 
+SELECT *
 FROM @extschema@.pg_masking_rules
 ;
 
@@ -802,10 +802,10 @@ FROM @extschema@.pg_masking_rules
 -- name of the source schema
 CREATE OR REPLACE FUNCTION @extschema@.source_schema()
 RETURNS TEXT AS
-$func$ 
-  SELECT value 
-  FROM @extschema@.config 
-  WHERE param='sourceschema' 
+$func$
+  SELECT value
+  FROM @extschema@.config
+  WHERE param='sourceschema'
 $func$
 LANGUAGE SQL STABLE;
 
@@ -841,15 +841,15 @@ BEGIN
   AND attname = colname;
 
   IF mf IS NULL THEN
-  RAISE WARNING 'There is no masking rule for column % in table %', 
-                colname, 
+  RAISE WARNING 'There is no masking rule for column % in table %',
+                colname,
                 tablename;
   RETURN FALSE;
   END IF;
 
   SELECT mf LIKE 'anon.fake_%' INTO mf_is_a_faking_function;
   IF mf_is_a_faking_function AND not anon.isloaded() THEN
-    RAISE NOTICE 'The faking data is not loaded. 
+    RAISE NOTICE 'The faking data is not loaded.
                   You probably need to run ''SELECT @extschema@.load()'' ';
   END IF;
 
@@ -881,7 +881,7 @@ LANGUAGE SQL VOLATILE
 CREATE OR REPLACE FUNCTION @extschema@.anonymize_database()
 RETURNS BOOLEAN AS
 $func$
-  SELECT  SUM(anon.anonymize_column(attrelid::REGCLASS,attname)::INT) 
+  SELECT  SUM(anon.anonymize_column(attrelid::REGCLASS,attname)::INT)
             = COUNT(attrelid)
   FROM anon.pg_masking_rules;
 $func$
@@ -984,8 +984,8 @@ LANGUAGE plpgsql VOLATILE
 
 
 -- get the "select filters" that will mask the real data of a table
-CREATE OR REPLACE FUNCTION @extschema@.mask_filters( 
-  relid OID 
+CREATE OR REPLACE FUNCTION @extschema@.mask_filters(
+  relid OID
 )
 RETURNS TEXT AS
 $func$
@@ -1020,8 +1020,8 @@ LANGUAGE plpgsql VOLATILE
 ;
 
 -- Build a masked view for a table
-CREATE OR REPLACE FUNCTION @extschema@.mask_create_view( 
-  relid OID 
+CREATE OR REPLACE FUNCTION @extschema@.mask_create_view(
+  relid OID
 )
 RETURNS BOOLEAN AS
 $func$
@@ -1038,13 +1038,13 @@ LANGUAGE plpgsql VOLATILE
 ;
 
 -- Remove a masked view for a given table
-CREATE OR REPLACE FUNCTION @extschema@.mask_drop_view( 
-  relid OID 
+CREATE OR REPLACE FUNCTION @extschema@.mask_drop_view(
+  relid OID
 )
 RETURNS BOOLEAN AS
 $func$
 BEGIN
-  EXECUTE format( 'DROP VIEW "%s".%s;', 
+  EXECUTE format( 'DROP VIEW "%s".%s;',
                   @extschema@.mask_schema(),
                   relid::REGCLASS
   );
@@ -1074,17 +1074,17 @@ BEGIN
     PERFORM @extschema@.load();
   END IF;
 
-  EXECUTE format( 'CREATE SCHEMA IF NOT EXISTS %I', 
+  EXECUTE format( 'CREATE SCHEMA IF NOT EXISTS %I',
                   maskschema
                 );
-  EXECUTE format( 'UPDATE @extschema@.config 
-                   SET value=''%s'' 
-                   WHERE param=''sourceschema'';', 
+  EXECUTE format( 'UPDATE @extschema@.config
+                   SET value=''%s''
+                   WHERE param=''sourceschema'';',
                   sourceschema
                 );
-  EXECUTE format('UPDATE @extschema@.config 
-                  SET value=''%s'' 
-                  WHERE param=''maskschema'';', 
+  EXECUTE format('UPDATE @extschema@.config
+                  SET value=''%s''
+                  WHERE param=''maskschema'';',
                   maskschema
                 );
 
@@ -1132,10 +1132,10 @@ BEGIN
   WHERE @extschema@.hasmask(oid::REGROLE);
 
   -- Erase the config
-  DELETE FROM @extschema@.config 
+  DELETE FROM @extschema@.config
   WHERE param='sourceschema';
-  
-  DELETE FROM @extschema@.config 
+
+  DELETE FROM @extschema@.config
   WHERE param='maskschema';
 
   RETURN TRUE;
@@ -1170,14 +1170,14 @@ DECLARE
   sourceschema REGNAMESPACE;
   maskschema REGNAMESPACE;
 BEGIN
-  SELECT @extschema@.source_schema()::REGNAMESPACE 
+  SELECT @extschema@.source_schema()::REGNAMESPACE
     INTO sourceschema;
-  
-  SELECT @extschema@.mask_schema()::REGNAMESPACE 
+
+  SELECT @extschema@.mask_schema()::REGNAMESPACE
     INTO maskschema;
-  
+
   RAISE DEBUG 'Mask role % (% -> %)', maskedrole, sourceschema, maskschema;
-  
+
   EXECUTE format('REVOKE ALL ON SCHEMA %s FROM %s', sourceschema, maskedrole);
   EXECUTE format('GRANT USAGE ON SCHEMA %s TO %s', '@extschema@', maskedrole);
   EXECUTE format('GRANT SELECT ON ALL TABLES IN SCHEMA %s TO %s', '@extschema@', maskedrole);
@@ -1199,10 +1199,10 @@ BEGIN
   -- we dont know what priviledges this role had before putting his mask on
   -- so we keep most of the priviledges as they are and let the
   -- administrator restore the correct access right.
-  RAISE NOTICE 'The previous priviledges of ''%'' are not restored. 
-                You need to grant them manually.', 
+  RAISE NOTICE 'The previous priviledges of ''%'' are not restored.
+                You need to grant them manually.',
                 maskedrole;
-  
+
   -- restore default search_path
   EXECUTE format('ALTER ROLE %s RESET search_path;',
                  maskedrole);
@@ -1219,11 +1219,11 @@ RETURNS BOOLEAN AS
 $func$
 BEGIN
   IF NOT EXISTS (
-    SELECT FROM pg_event_trigger 
+    SELECT FROM pg_event_trigger
     WHERE evtname='@extschema@_mask_update'
   )
   THEN
-    CREATE EVENT TRIGGER @extschema@_mask_update 
+    CREATE EVENT TRIGGER @extschema@_mask_update
     ON ddl_command_end
     EXECUTE PROCEDURE @extschema@.mask_trigger();
   ELSE
@@ -1242,7 +1242,7 @@ RETURNS BOOLEAN AS
 $func$
 BEGIN
   IF EXISTS (
-    SELECT FROM pg_event_trigger 
+    SELECT FROM pg_event_trigger
     WHERE evtname='@extschema@_mask_update'
   )
   THEN
