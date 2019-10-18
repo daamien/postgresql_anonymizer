@@ -6,7 +6,7 @@ terminal:
     - make extension
     - make install
     - echo "shared_preload_libraries = 'anon'" >> /var/lib/postgresql/data/postgresql.conf
-    - gosu postgres pg_ctl restart
+#    - gosu postgres pg_ctl restart
   variables:
     PGDATA: /var/lib/postgresql/data
     PGUSER: postgres
