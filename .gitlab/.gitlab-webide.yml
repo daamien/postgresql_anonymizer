@@ -1,0 +1,15 @@
+terminal:
+  image: postgres:12
+#  script:
+#    - apt-get update && apt-get install -y make gcc git postgresql-server-dev-12 pgxnclient
+#    - pgxn install ddlx
+#    - make extension
+#    - make install
+#    - echo "shared_preload_libraries = 'anon'" >> /var/lib/postgresql/data/postgresql.conf
+#    - gosu postgres pg_ctl restart
+  variables:
+    PGDATA: /var/lib/postgresql/data
+    PGUSER: postgres
+    POSTGRES_DB: nice_marmot
+    POSTGRES_USER: runner
+    POSTGRES_PASSWORD: plop
