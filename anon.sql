@@ -1264,7 +1264,7 @@ DECLARE
   rec RECORD;
 BEGIN
 -- Stop right now if the table is empty
-  EXECUTE format(E'SELECT true WHERE NOT EXISTS (SELECT 1 FROM %s);'
+  EXECUTE format(E'SELECT true WHERE NOT EXISTS (SELECT 1 FROM %s);',
                                                     relid::REGCLASS)
   INTO empty_table;
   IF emty_table THEN
