@@ -1259,6 +1259,7 @@ CREATE OR REPLACE FUNCTION @extschema@.get_copy_statement(relid OID)
 RETURNS TEXT AS
 $$
 DECLARE
+  empty_table BOOLEAN;
   copy_statement TEXT;
   val TEXT;
   rec RECORD;
