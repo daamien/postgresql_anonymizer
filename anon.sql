@@ -1263,7 +1263,15 @@ DECLARE
   val TEXT;
   rec RECORD;
 BEGIN
---  /!\ cannot use COPY TO STDOUT in PL/pgSQL
+-- Stop right now if the table is empty
+  EXECUTE format(E'SELECT true WHERE NOT EXISTS (SELECT 1 FROM %s);'
+                                                    relid::REGCLASS)
+  INTO empty_table;
+  IF emty_table THEN
+    RETURN "";
+  END IF;
+
+  --  /!\ cannot use COPY TO STDOUT in PL/pgSQL
   copy_statement := format(E' COPY %s
                               FROM STDIN
                               CSV QUOTE AS ''"''
