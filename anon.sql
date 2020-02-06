@@ -1269,7 +1269,7 @@ BEGIN
                                                     relid::REGCLASS)
   INTO empty_table;
   IF emty_table THEN
-    RETURN "";
+    RETURN '';
   END IF;
 
   --  /!\ cannot use COPY TO STDOUT in PL/pgSQL
