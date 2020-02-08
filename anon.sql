@@ -1268,7 +1268,7 @@ BEGIN
   EXECUTE format(E'SELECT true WHERE NOT EXISTS (SELECT 1 FROM %s);',
                                                     relid::REGCLASS)
   INTO empty_table;
-  IF emty_table THEN
+  IF empty_table THEN
     RETURN '';
   END IF;
 
