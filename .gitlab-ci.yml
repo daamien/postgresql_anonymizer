@@ -57,8 +57,7 @@ make9.6:
     - make install
     - psql -c "ALTER SYSTEM SET session_preload_libraries = 'anon'"
     - psql -c "SELECT pg_reload_conf();"
-    - make installcheck || diff results tests/expected
-    - cat results/pg_dump_anon.out
+    - make installcheck || diff results tests/expected || cat results/pg_dump_anon.out
   artifacts:
     paths:
         - anon*
