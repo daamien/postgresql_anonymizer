@@ -44,10 +44,10 @@ $PSQL << EOSQL
 EOSQL
 }
 
-## Return the masking filters based on the relid
+## Return the masking filters based on the table name
 get_mask_filters() {
 $PSQL << EOSQL
-  SELECT anon.mask_filters($1);
+  SELECT anon.mask_filters('$1'::REGCLASS);
 EOSQL
 }
 
