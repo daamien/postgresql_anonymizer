@@ -25,11 +25,11 @@ Options controlling the output content:
 
 Connection options:
   -d, --dbname=DBNAME           database to dump
-  -h, --host=HOSTNAME           database server host or socket directory"
-  -p, --port=PORT               database server port number"
-  -U, --username=NAME           connect as specified database user"
-  -w, --no-password             never prompt for password"
-  -W, --password                force password prompt (should happen automatically)"
+  -h, --host=HOSTNAME           database server host or socket directory
+  -p, --port=PORT               database server port number
+  -U, --username=NAME           connect as specified database user
+  -w, --no-password             never prompt for password
+  -W, --password                force password prompt (should happen automatically)
 
 If no database name is supplied, then the PGDATABASE environment
 variable value is used.
@@ -64,7 +64,7 @@ EOSQL
 ##
 pg_dump_opt=$@        # backup args before parsing
 psql_connect_opt=     # connections options
-psql_other_opt=       # other options (currently only -f is supported)
+psql_output_opt=      # print options (currently only -f is supported)
 exclude_table_data=   # dump the ddl, but ignore the data
 
 while [ $# -gt 0 ]; do
@@ -74,24 +74,39 @@ while [ $# -gt 0 ]; do
         shift
         psql_connect_opt+=" $1"
         ;;
-    -f|--file)
-        psql_other_opt+=" --output="
+    --dbname=*)
+        psql_connect_opt+=" $1"
+        ;;
+    -f|--file)  # `pg_dump -f foo.sql` becomes `psql -o foo.sql`
+        psql_output_opt+=" -o"
         shift
-        psql_other_opt+="$1"
+        psql_output_opt+=" $1"
+        ;;
+    --file=*) # `pg_dump -file=foo.sql` becomes `psql --output=foo.sql`
+        psql_output_opt+=" $(echo $1| sed s/--file=/--output=/)"
         ;;
     -h|--host)
         psql_connect_opt+=" $1"
         shift
         psql_connect_opt+=" $1"
         ;;
-    -p|--port)
+    --host=*)
         psql_connect_opt+=" $1"
         shift
+        psql_connect_opt+=" $1"
+        ;;
+    -p|--port)
+        psql_connect_opt+=" $1"
+        ;;
+    --port=*)
         psql_connect_opt+=" $1"
         ;;
     -U|--username)
         psql_connect_opt+=" $1"
         shift
+        psql_connect_opt+=" $1"
+        ;;
+    --username=*)
         psql_connect_opt+=" $1"
         ;;
     -w|--no-password)
@@ -100,13 +115,19 @@ while [ $# -gt 0 ]; do
     -W|--password)
         psql_connect_opt+=" $1"
         ;;
-    -n|--schema=*)
+    -n|--schema)
         # ignore the option for psql
         shift
         ;;
-    -N|--exclude-schema=*)
+    --schema=*)
+        # ignore the option for psql
+        ;;
+    -N|--exclude-schema)
         # ignore the option for psql
         shift
+        ;;
+    --exclude-schema=*)
+        # ignore the option for psql
         ;;
     -t)
         # ignore the option for psql
@@ -118,6 +139,9 @@ while [ $# -gt 0 ]; do
     -T|--exclude-table)
         # ignore the option for psql
         shift
+        ;;
+    --exclude-table=*)
+        # ignore the option for psql
         ;;
     --exclude-table-data=*)
         exclude_table_data+=" $1"
@@ -140,7 +164,7 @@ while [ $# -gt 0 ]; do
 done
 
 PSQL="psql $psql_connect_opt --quiet --tuples-only --no-align"
-PSQL_PRINT="$PSQL $psql_other_opt"
+PSQL_PRINT="$PSQL $psql_output_opt"
 
 ## Stop if the extension is not installed in the database
 version=$(get_anon_version)
