@@ -1,5 +1,7 @@
 -- this test must be run on a database named 'contrib_regression'
 CREATE EXTENSION IF NOT EXISTS anon CASCADE;
+NOTICE:  installing required extension "tsm_system_rows"
+NOTICE:  installing required extension "ddlx"
 -- INIT
 SELECT anon.load();
  load 
@@ -76,16 +78,7 @@ VALUES (1,'Jean', 'Bon', NULL, '0001-01-01');
 \! pg_dump_anon --dbname=contrib_regression > tests/tmp/_pg_dump_anon_A1.sql
 -- A2. Clean up the database
 DROP SCHEMA test_pg_dump_anon CASCADE;
-NOTICE:  drop cascades to 4 other objects
-DETAIL:  drop cascades to table test_pg_dump_anon.no_masks
-drop cascades to table test_pg_dump_anon.cards
-drop cascades to table test_pg_dump_anon.customer
-drop cascades to table test_pg_dump_anon."COMPANY"
 DROP SCHEMA "FoO" CASCADE;
-NOTICE:  drop cascades to 3 other objects
-DETAIL:  drop cascades to table "FoO".customer
-drop cascades to table "FoO".vendor
-drop cascades to table "FoO".vendeur
 DROP EXTENSION anon CASCADE;
 -- A3. Restore with the dump file
 -- output will vary a lot between PG versions
@@ -116,16 +109,13 @@ DROP EXTENSION anon CASCADE;
 -- D. Exclude data
 --
 \! pg_dump_anon contrib_regression --exclude-data=v?nd?r | grep 'Hamm'
+--
+-- E. Remove Anon extension
+-- All these command lines should produce the same output
+--
+\! pg_dump_anon contrib_regression | grep 'ddlx'
+\! pg_dump_anon contrib_regression | grep 'EXTENSION'
 --  CLEAN
 DROP SCHEMA test_pg_dump_anon CASCADE;
-NOTICE:  drop cascades to 4 other objects
-DETAIL:  drop cascades to table test_pg_dump_anon."COMPANY"
-drop cascades to table test_pg_dump_anon.cards
-drop cascades to table test_pg_dump_anon.customer
-drop cascades to table test_pg_dump_anon.no_masks
 DROP SCHEMA "FoO" CASCADE;
-NOTICE:  drop cascades to 3 other objects
-DETAIL:  drop cascades to table "FoO".customer
-drop cascades to table "FoO".vendeur
-drop cascades to table "FoO".vendor
 DROP EXTENSION anon CASCADE;
