@@ -95,12 +95,11 @@ VALUES (1,'Jean', 'Bon', NULL, '0001-01-01');
 -- A2. Clean up the database
 DROP SCHEMA test_pg_dump_anon CASCADE;
 DROP SCHEMA "FoO" CASCADE;
-DROP EXTENSION anon CASCADE;
 
 -- A3. Restore with the dump file
 -- output will vary a lot between PG versions
 -- So have to disable it to pass this test
-\! psql -f tests/tmp/_pg_dump_anon_1.sql contrib_regression >/dev/null
+\! psql -f tests/tmp/_pg_dump_anon_A1.sql contrib_regression >/dev/null
 
 -- A4. Dump again into a second file
 -- /!\ This time the masking rules are not applied !
