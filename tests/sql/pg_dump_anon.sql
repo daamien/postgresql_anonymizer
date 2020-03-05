@@ -141,6 +141,14 @@ DROP EXTENSION anon CASCADE;
 --
 \! pg_dump_anon contrib_regression --exclude-data=v?nd?r | grep 'Hamm'
 
+--
+-- E. Remove Anon extension
+-- All these command lines should produce the same output
+--
+\! pg_dump_anon contrib_regression | grep 'ddlx'
+\! pg_dump_anon contrib_regression | grep 'EXTENSION'
+
+
 --  CLEAN
 DROP SCHEMA test_pg_dump_anon CASCADE;
 DROP SCHEMA "FoO" CASCADE;

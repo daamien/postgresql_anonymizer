@@ -77,7 +77,7 @@ exclude_table_data=   # dump the ddl, but ignore the data
 while [ $# -gt 0 ]; do
     case "$1" in
     -d|--dbname)
-        psql_connect_opt+=" $1"
+        psql_connect_op+=" $1"
         shift
         psql_connect_opt+=" $1"
         ;;
