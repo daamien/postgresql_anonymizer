@@ -108,7 +108,7 @@ DROP SCHEMA "FoO" CASCADE;
 
 -- A5. Check that both dump files are identical
 -- ignore the plpgsql error on PG10 and PG9.6
-\! diff tests/tmp/_pg_dump_anon_A1.sql tests/tmp/_pg_dump_anon_A4.sql | grep -v -E 'plpgsql'
+\! diff tests/tmp/_pg_dump_anon_A1.sql tests/tmp/_pg_dump_anon_A4.sql
 
 
 --
@@ -146,7 +146,6 @@ DROP SCHEMA "FoO" CASCADE;
 -- All these command lines should produce the same output
 --
 \! pg_dump_anon contrib_regression | grep 'ddlx'
-\! pg_dump_anon contrib_regression | grep 'EXTENSION'
 
 
 --  CLEAN
