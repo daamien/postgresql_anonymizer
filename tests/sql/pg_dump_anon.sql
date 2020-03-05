@@ -85,10 +85,6 @@ CREATE TABLE "FoO".vendeur (
 INSERT INTO "FoO".vendeur
 VALUES (1,'Jean', 'Bon', NULL, '0001-01-01');
 
--- This is a trick to load plpgsql on PG 9.6 and 10
--- while avoid "already exists" message on PG 11+
-\! psql --dbname=contrib_regression  -c "CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;" > /dev/null 2>&1
-
 --
 -- A. Dump and Restore and Dump again and compare
 --
@@ -111,7 +107,8 @@ DROP SCHEMA "FoO" CASCADE;
 
 
 -- A5. Check that both dump files are identical
-\! diff tests/tmp/_pg_dump_anon_A1.sql tests/tmp/_pg_dump_anon_A4.sql
+-- ignore the plpgsql error on PG10 and PG9.6
+\! diff tests/tmp/_pg_dump_anon_A1.sql tests/tmp/_pg_dump_anon_A4.sql | grep -v -E 'plpgsql'
 
 
 --
