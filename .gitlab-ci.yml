@@ -207,6 +207,8 @@ pgxn:
 
 test_pgxn:
   stage: deploy
+  before_script:
+    - echo "disable the before_script"
   script:
     - apt-get update && apt-get install -y make gcc postgresql-server-dev-11 pgxnclient
     - pgxn install postgresql_anonymizer
@@ -216,6 +218,8 @@ test_pgxn:
 test_pgxn_ubuntu_pg95:
   stage: deploy
   image: ubuntu:bionic
+  before_script:
+    - echo "disable the before_script"
   script:
     - apt-get update && apt-get install -y make gcc postgresql-common pgxnclient
     - sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
