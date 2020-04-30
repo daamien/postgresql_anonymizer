@@ -222,7 +222,7 @@ test_pgxn_ubuntu_pg95:
     - echo "disable the before_script"
   script:
     - apt-get update && apt-get install -y make gcc postgresql-common pgxnclient
-    - sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+    - sh /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -i -v 9.5
     - apt-get update && apt-get install -y postgresql-server-dev-9.5
     - pg_config --sharedir
     - pgxn install --pg_config /usr/lib/postgresql/9.5/bin/pg_config ddlx
