@@ -75,18 +75,18 @@ There are also some functions that can add noise on an entire column:
 
 There are also some functions that add noise on the fly:
 
-* `anon.add_noise_to_numeric(column,ratio)` column may be INT, BIGINT or FLOAT right now
+* `anon.noise(value,ratio)` value may be INT, BIGINT or FLOAT right now
 
-* `anon.add_noise_to_date(column,interval)` 
-  a random interval of +/- interval will be added to the DATE column
+* `anon.noise(value,interval)` 
+  a random interval of +/- interval will be added to the DATE value
 
-* `anon.add_noise_to_timestamp(column,interval)` 
-  a random interval of +/- interval will be added to the timestamp (with or without tz) column
+* `anon.noise(value,interval)` 
+  a random interval of +/- interval will be added to the timestamp (with or without tz) value
 
 
 **WARNING** : The noise() masking functions are vulnerable to a form of
 repeat attack, especially with [Dynamic Masking]. A masked user can guess the
-an original value by resquesting the masked value multiple times and then simply
+original value by resquesting the masked value multiple times and then simply
 use the `AVG()` function to get a close approximation. ( See
 `demo/noise_reduction_attack.sql` for more details). In a nutshell, these
 functions are best fitted for [Anonymous Dumps] and [In-Place Anonymization].
