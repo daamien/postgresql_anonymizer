@@ -3,6 +3,7 @@ use pgrx::pgrx_macros::extension_sql_file;
 use pgrx::prelude::*;
 
 mod compat;
+mod decoder;
 mod dummy;
 mod error;
 mod fixture;
@@ -461,6 +462,12 @@ pub unsafe extern "C" fn _PG_init() {
     debug1!("Anon: extension initialized");
 }
 
+#[pg_guard]
+pub unsafe extern "C" fn _PG_output_plugin_init(
+    pg_sys::OutputPluginCallbacks * callbacks
+) {
+    decoder::output_plugin_init(callbacks)
+}
 
 //----------------------------------------------------------------------------
 // Unit tests
