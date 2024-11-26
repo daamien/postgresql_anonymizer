@@ -41,7 +41,7 @@ PGDATABASE?=contrib_regression
 # PGXS is used only for functional testing with `make installcheck`
 # For unit tests, we use `cargo` via `make test`
 
-REGRESS_TESTS = init
+REGRESS_TESTS = initialize
 REGRESS_TESTS+= ternary
 REGRESS_TESTS+= noise shuffle
 REGRESS_TESTS+= detection
@@ -49,7 +49,7 @@ REGRESS_TESTS+= get_function_schema trusted_schemas
 REGRESS_TESTS+= copy pg_dump
 REGRESS_TESTS+= masking_expressions
 REGRESS_TESTS+= sampling
-REGRESS_TESTS+= destruction random dummy faking partial
+REGRESS_TESTS+= destruction random_functions dummy faking partial
 REGRESS_TESTS+= pseudonymization hashing
 REGRESS_TESTS+= ldm transparent_dynamic_masking
 REGRESS_TESTS+= anon_catalog anonymize privacy_by_default

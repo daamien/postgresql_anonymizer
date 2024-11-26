@@ -4,6 +4,7 @@
 
 use c_str_macro::c_str;
 use crate::guc;
+use crate::log;
 use crate::re;
 use crate::sampling;
 use crate::utils;
@@ -583,10 +584,10 @@ pub fn value_for_att(
 
     // There's no masking
 
-    debug3!("Anon: Privacy by default is on");
+    log::debug3!("Anon: Privacy by default is on");
     // At this stage, we know privacy_by_default is on
     // Let's try to find the default value of the column
-    if att.atthasdef {
+    if att.atthasdef && att.attnum > 0 && ! att.attisdropped {
         if let Some(default_value) = default_for_att(rel, att, false) {
             // mask with the default value
             return (default_value, true);

@@ -3,10 +3,31 @@ CHANGELOG
 
 <!-- git log --oneline $(git describe --tags --abbrev=0 @^)..@ -->
 
-
-FIXME : 2.0.0-beta.4 - Better, Faster, Safer
+FIXME : 2.0.0-rc.1 - Better, Faster, Safer
 -------------------------------------------------------------------------------
 
+
+20241125 : 2.0.0-beta.4 - Better, Faster, Safer
+-------------------------------------------------------------------------------
+
+* Bump to PGRX 0.12.9
+* [core] restrict debug output to debug mode
+* [dump] use --exclude-extension
+* FIX #485 notice_if_not_init (LeoLong)
+* [tests] Minor fix in the COPY test
+* [core] ignore masking rules in the `anon` schema (Konrad Kucharski)
+* [core] fix minor warnings
+* [test] FIX minor problem in the test for privacy by default
+* [doc] Add tutorials
+* [doc] NEWS 2.0
+* [doc] Update README
+* [static] Support for identity columns
+* Masking Foreign Data Wrapper
+* Fix (unofficial) support for ARM64
+* Bump to 2.0.0-beta.4
+* [core] Drop Support for PostgreSQL 12
+* [core] FIX #479 Allow privacy by default for anonymous dumps (Konrad Kucharski)
+* [random] Generate a random but unique value with anon.random_id
 
 20241023 : 2.0.0-beta.3 - Better, Faster, Safer
 -------------------------------------------------------------------------------

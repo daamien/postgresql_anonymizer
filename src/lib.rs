@@ -10,6 +10,7 @@ mod guc;
 mod hooks;
 mod input;
 mod label_providers;
+mod log;
 mod macros;
 mod masking;
 mod random;
@@ -21,6 +22,13 @@ mod walker;
 
 // Load the SQL functions AFTER the rust functions
 extension_sql_file!("../sql/anon.sql", name="anon", finalize);
+
+extension_sql_file!("../sql/fake_data_tables.sql", name="fake_data_tables", requires=["anon"]);
+extension_sql_file!("../sql/init.sql", name="init",requires=["fake_data_tables"]);
+extension_sql_file!("../sql/fake.sql", requires=["init"]);
+extension_sql_file!("../sql/pseudo.sql", requires=["init"]);
+
+extension_sql_file!("../sql/random.sql", requires =["anon"]);
 extension_sql_file!("../sql/static_masking.sql", requires =["anon"]);
 extension_sql_file!("../sql/legacy_dynamic_masking.sql", requires =["anon"]);
 
@@ -420,6 +428,8 @@ mod anon {
 // Initialization
 //----------------------------------------------------------------------------
 
+const ANON: &core::ffi::CStr = c"anon";
+
 static mut HOOKS: hooks::AnonHooks = hooks::AnonHooks {
 };
 
@@ -439,7 +449,7 @@ pub unsafe extern "C" fn _PG_init() {
     pgrx::hooks::register_hook(&mut HOOKS);
     guc::register_gucs();
     label_providers::register_label_providers();
-    debug1!("Anon: extension initialized");
+    log::debug1!("Anon: extension initialized");
 }
 
 
