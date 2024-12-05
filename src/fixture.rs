@@ -81,8 +81,12 @@ pub fn create_table_person() -> pg_sys::Oid {
     Spi::run("
          CREATE TABLE person AS
          SELECT  'Sarah'::VARCHAR(30)        AS firstname,
-                 'Connor'::TEXT              AS lastname
+                 'Connor'::TEXT              AS lastname,
+                 NULL::TEXT                  AS address
          ;
+
+         ALTER TABLE person DROP COLUMN address;
+
          SECURITY LABEL FOR anon ON COLUMN person.lastname
            IS 'MASKED WITH VALUE NULL';
 
