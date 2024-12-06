@@ -769,18 +769,24 @@ mod tests {
     fn test_masking_value_for_column(){
         let relid = fixture::create_table_person();
         let anon = ANON_DEFAULT_MASKING_POLICY.to_string();
+
+        // testing a dropped column
+        let none = masking_value_for_column(relid,1,anon.clone());
+        assert_eq!(None,none);
+
         // testing the first column
-        let (result_1, is_masked_1) =
-            masking_value_for_column(relid,1,anon.clone()).unwrap();
-        let expected_1 = "firstname".to_string();
-        assert_eq!(expected_1,result_1);
-        assert!(!is_masked_1);
-        // testing the second column
         let (result_2, is_masked_2) =
             masking_value_for_column(relid,2,anon.clone()).unwrap();
-        let expected_2 = "CAST(NULL AS text)".to_string();
-        assert!(is_masked_2);
+        let expected_2 = "firstname".to_string();
         assert_eq!(expected_2,result_2);
+        assert!(!is_masked_2);
+
+        // testing the second column
+        let (result_3, is_masked_3) =
+            masking_value_for_column(relid,3,anon.clone()).unwrap();
+        let expected_3 = "CAST(NULL AS text)".to_string();
+        assert!(is_masked_3);
+        assert_eq!(expected_3,result_3);
     }
 
 
@@ -945,9 +951,9 @@ mod tests {
 
         // Test column with default value
         // Assuming the second column has a default value
-        let att_firstname = attrs[0];
-        let att_lastname  = attrs[1];
-        let att_dropped   = attrs[2];
+        let att_dropped   = attrs[0];
+        let att_firstname = attrs[1];
+        let att_lastname  = attrs[2];
 
         let (val1, masked1) = value_for_att(&relation,&att_firstname,"anon".into());
         assert_eq!(val1,"firstname");
@@ -966,7 +972,7 @@ mod tests {
         assert!(!masked4);
 
         let (val5, masked5) = value_for_att(&relation,&att_dropped,"anon".into());
-        assert_eq!(val5,"lastname");
+        assert_eq!(val5,"\"........pg.dropped.1........\"");
         assert!(!masked5);
 
     }
