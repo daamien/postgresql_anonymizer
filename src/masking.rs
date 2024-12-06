@@ -262,14 +262,16 @@ pub fn subquery( relid: pg_sys::Oid, policy: String) -> Option<String>
     hasher.update(tablename.clone());
     let tablename_hash = format!("{:X}",hasher.finalize());
 
-    Some(format!("
+    let subquery = format!("
         SELECT {gen_expressions}
         FROM (
             SELECT {masking_expressions}
             FROM {tablename}
             {tablesample}
         ) AS anon_alias_{tablename_hash}"
-    ))
+    );
+    log::debug3!("Anon: Subquery = {subquery}");
+    Some(subquery)
 }
 
 /// Prepare a ParseTree object from a SQL query
@@ -361,8 +363,6 @@ pub fn rule_on_schema(object_id: pg_sys::Oid, policy: &str)
 /// The String is the list of "select clause filters" containing the column
 /// names or the generation expression for generated columns.
 ///
-/// the bool indicate is the table as at least one generated column
-///
 fn generation_expressions(
     relid: pg_sys::Oid,
 ) -> String {
@@ -408,7 +408,7 @@ fn generation_expressions(
 
     if table_has_one_generated_column {
         expressions.join(", ").to_string()
-    }else {
+    } else {
         "*".into()
     }
 
@@ -440,6 +440,11 @@ fn default_for_att(
     att: &pg_sys::FormData_pg_attribute,
     generated: bool
 ) -> Option<String> {
+
+    // Skip if the attribute is dropped
+    if att.attisdropped {
+        return None;
+    }
 
     // skip if this is a generated column and we don't want them
     if generated != is_generated(att) {
@@ -667,6 +672,11 @@ mod tests {
 
         let not_generation_expr = default_for_att(&relation, &att_generated, false);
         assert_eq!(not_generation_expr,None);
+
+        // Test dropped column
+        let att_dropped = attrs[5];
+        let nothing = default_for_att(&relation, &att_dropped, true);
+        assert_eq!(nothing,None);
 
         // Clean up
         unsafe {
@@ -914,4 +924,51 @@ mod tests {
         assert!(result.contains("firstname"));
         assert!(result.contains("lastname"));
     }
+
+
+    #[pg_test]
+    fn test_value_for_att() {
+        // Create a table
+        let relid = fixture::create_table_person();
+        let lockmode = pg_sys::AccessShareLock as i32;
+        let relation = unsafe {
+            PgBox::from_pg(pg_sys::relation_open(relid, lockmode))
+        };
+        let reldesc = unsafe {
+            PgBox::from_pg(relation.rd_att)
+        };
+
+        let natts = reldesc.natts;
+        let attrs = unsafe {
+            reldesc.attrs.as_slice(natts.try_into().unwrap())
+        };
+
+        // Test column with default value
+        // Assuming the second column has a default value
+        let att_firstname = attrs[0];
+        let att_lastname  = attrs[1];
+        let att_dropped   = attrs[2];
+
+        let (val1, masked1) = value_for_att(&relation,&att_firstname,"anon".into());
+        assert_eq!(val1,"firstname");
+        assert!(!masked1);
+
+        let (val2, masked2) = value_for_att(&relation,&att_firstname,"does_not_exists".into());
+        assert_eq!(val2,"firstname");
+        assert!(!masked2);
+
+        let (val3, masked3) = value_for_att(&relation,&att_lastname,"anon".into());
+        assert_eq!(val3,"CAST(NULL AS text)");
+        assert!(masked3);
+
+        let (val4, masked4) = value_for_att(&relation,&att_lastname,"does_not_exists".into());
+        assert_eq!(val4,"lastname");
+        assert!(!masked4);
+
+        let (val5, masked5) = value_for_att(&relation,&att_dropped,"anon".into());
+        assert_eq!(val5,"lastname");
+        assert!(!masked5);
+
+    }
+
 }
