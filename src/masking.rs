@@ -242,7 +242,7 @@ pub fn subquery( relid: pg_sys::Oid, policy: String) -> Option<String>
 
     // if there's no mask and no tablesample ratio,
     // do not provide a subquery for this table
-    if ! table_is_masked && ! ratio.is_ok() { return None; }
+    if ! table_is_masked && ratio.is_err() { return None; }
 
     let gen_expressions =  generation_expressions(relid);
 
